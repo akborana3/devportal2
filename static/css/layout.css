@@ -1,143 +1,261 @@
-/* static/css/layout.css */
+/* static/css/layout.css - SLEEK & MODERN REDESIGN */
+
 #app-layout {
-    display: none; /* Hidden until authenticated */
-    width: 100%;
-    height: 100%;
+    display: flex;
+    width: 100vw;
+    height: 100dvh;
+    background: var(--bg-base);
 }
 
-/* Sidebar Styling */
+/* --- SIDEBAR (Desktop Activity Bar) --- */
 #sidebar {
-    width: 260px;
-    background: var(--bg-surface);
+    width: 60px;
+    background: var(--sidebar-bg);
     border-right: var(--glass-border);
     display: flex;
     flex-direction: column;
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    align-items: center;
+    padding-top: 15px;
     z-index: 100;
 }
 
 .logo-container {
-    padding: 24px;
+    margin-bottom: 25px;
     display: flex;
-    align-items: center;
-    gap: 12px;
-    border-bottom: var(--glass-border);
+    justify-content: center;
 }
 
 .logo-text {
-    font-size: 20px;
-    font-weight: 700;
-    letter-spacing: 1px;
-    color: var(--text-primary);
-}
-
-.logo-accent {
-    color: var(--accent-main);
+    display: none; /* Hide text on slim sidebar */
 }
 
 .nav-menu {
-    padding: 15px 10px;
-    flex: 1;
-    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
+    gap: 10px;
 }
 
 .nav-item {
-    padding: 12px 16px;
-    margin-bottom: 5px;
-    border-radius: 8px;
-    cursor: pointer;
-    color: var(--text-secondary);
+    width: 44px;
+    height: 44px;
     display: flex;
     align-items: center;
-    gap: 12px;
-    transition: all 0.2s ease;
-    font-weight: 500;
+    justify-content: center;
+    color: var(--text-secondary);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 20px;
+    transition: all 0.2s;
+    position: relative;
+}
+
+.nav-item span {
+    display: none; /* Hide text */
 }
 
 .nav-item:hover {
     color: var(--text-primary);
-    background: rgba(255, 255, 255, 0.03);
+    background: rgba(255,255,255,0.05);
+}
+
+.light-theme .nav-item:hover {
+    background: rgba(0,0,0,0.05);
 }
 
 .nav-item.active {
-    background: rgba(255, 193, 7, 0.1);
     color: var(--accent-main);
-    border-right: 3px solid var(--accent-main);
+}
+.nav-item.active::before {
+    content: '';
+    position: absolute;
+    left: -8px;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 24px;
+    width: 3px;
+    background: var(--accent-main);
+    border-radius: 0 4px 4px 0;
 }
 
-/* Main Content Area */
+/* --- MAIN CONTENT & TOPBAR --- */
 #main-content {
     flex: 1;
     display: flex;
     flex-direction: column;
-    min-width: 0;
-    background: radial-gradient(circle at top right, rgba(255,193,7,0.03), transparent 40%);
+    min-width: 0; /* Important for flex children truncating */
+    height: 100dvh;
 }
 
 #top-bar {
-    height: 65px;
-    padding: 0 24px;
+    height: 40px;
+    background: var(--bg-surface);
     border-bottom: var(--glass-border);
     display: flex;
-    align-items: center;
     justify-content: space-between;
-    background: rgba(10, 10, 10, 0.8);
-    backdrop-filter: var(--backdrop-blur);
+    align-items: center;
+    padding: 0 15px;
+    font-size: 13px;
+    color: var(--text-secondary);
 }
 
-.view-container {
-    flex: 1;
-    display: none; /* Views are hidden by default */
-    overflow: hidden;
+#mobile-menu-btn {
+    display: none !important;
 }
 
-.view-container.active {
-    display: flex;
-    flex-direction: column;
+/* --- BOTTOM NAV (Mobile Only) --- */
+#bottom-nav {
+    display: none;
+    height: var(--bottom-nav-height);
+    background: var(--bg-surface);
+    border-top: var(--glass-border);
+    width: 100%;
+    z-index: 100;
 }
 
-/* Mobile Adjustments */
+/* --- RESPONSIVE DESIGN --- */
 @media (max-width: 768px) {
     #sidebar {
-        position: absolute;
+        display: none !important;
+    }
+
+    #bottom-nav {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        padding-bottom: env(safe-area-inset-bottom);
+    }
+
+    #main-content {
+        height: calc(100dvh - var(--bottom-nav-height) - env(safe-area-inset-bottom));
+    }
+
+    .nav-item {
+        flex: 1;
         height: 100%;
-        transform: translateX(-100%);
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        font-size: 18px;
+        border-radius: 0;
     }
-    #sidebar.open {
-        transform: translateX(0);
-        box-shadow: 10px 0 30px rgba(0,0,0,0.5);
+    .nav-item.active::before {
+        display: none;
     }
-}
-
-/* Additional Mobile/Android Adjustments */
-@media (max-width: 480px) {
-    #top-bar {
-        padding: 0 15px; /* Reduce padding for smaller screens */
-    }
-
-    #top-bar-right {
-        gap: 10px; /* Reduce gap between theme icon and status */
-    }
-
-    #connection-status {
-        font-size: 11px; /* Slightly smaller text */
-    }
-
-    #sidebar {
-        width: 240px; /* Make sidebar slightly narrower on very small phones */
+    .nav-item.active {
+        color: var(--accent-main);
+        border-top: 2px solid var(--accent-main);
     }
 }
 
-/* Theme Overrides for Light Mode Backgrounds */
-:root.light-theme #main-content {
-    background: radial-gradient(circle at top right, rgba(0, 102, 204, 0.05), transparent 40%);
+/* Common UI Elements */
+.glass-panel {
+    background: var(--panel-bg);
+    border: var(--glass-border);
+    border-radius: 8px;
+    padding: 15px;
 }
-:root.light-theme #top-bar {
-    background: rgba(255, 255, 255, 0.8);
+
+.editor-btn {
+    background: var(--bg-surface);
+    color: var(--text-primary);
+    border: var(--glass-border);
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: var(--font-ui);
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
 }
-:root.light-theme .nav-item:hover {
-    background: rgba(0, 0, 0, 0.05);
+
+.editor-btn:hover {
+    background: rgba(255,255,255,0.05);
 }
-:root.light-theme .nav-item.active {
-    background: rgba(0, 102, 204, 0.1);
+
+.editor-btn.primary {
+    background: var(--accent-main);
+    color: #fff;
+    border: none;
+}
+.editor-btn.primary:hover {
+    background: var(--accent-hover);
+}
+
+.setting-input, .setting-select {
+    background: var(--bg-base);
+    border: var(--glass-border);
+    color: var(--text-primary);
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-family: var(--font-ui);
+    width: 100%;
+    box-sizing: border-box;
+    font-size: 13px;
+}
+.setting-input:focus, .setting-select:focus {
+    outline: none;
+    border-color: var(--accent-main);
+    box-shadow: 0 0 0 1px var(--accent-main);
+}
+
+/* Editor Tabs */
+.editor-tabs {
+    display: flex;
+    background: var(--bg-default);
+    overflow-x: auto;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.editor-tabs::-webkit-scrollbar {
+    height: 2px;
+}
+
+.editor-tab {
+    padding: 8px 12px;
+    background: var(--bg-surface);
+    border-right: 1px solid var(--border-color);
+    border-top: 2px solid transparent;
+    color: var(--text-secondary);
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
+}
+
+.editor-tab:hover {
+    background: var(--bg-hover);
+}
+
+.editor-tab.active {
+    background: var(--bg-main);
+    color: var(--text-primary);
+    border-top: 2px solid var(--accent-main);
+}
+
+.editor-tab button {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 2px;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.editor-tab button:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--error-color);
 }

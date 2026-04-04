@@ -6,27 +6,21 @@
             <div class="term-tab" style="padding: 5px 10px;">+</div>
             
             <div style="margin-left: auto; display: flex; gap: 10px;">
-                <button class="term-tab" onclick="document.getElementById('terminal-output').innerHTML=''"><i class="fa-solid fa-trash"></i> Clear</button>
+                <button class="term-tab" onclick="if(window.term) window.term.clear()"><i class="fa-solid fa-trash"></i> Clear</button>
             </div>
         </div>
         
-        <div id="terminal-output" class="terminal-body">
-            </div>
+        <div id="terminal-output" style="flex: 1; width: 100%; height: 100%; padding: 10px; background: #000; box-sizing: border-box;">
+        </div>
         
         <!-- Mobile/Termux Extra Keys Row -->
         <div class="termux-keys-row">
-            <button type="button" id="termux-ctrl-btn" class="termux-key" onclick="toggleTermuxCtrl()" style="background: rgba(255,193,7,0.1); border-color: var(--accent-main); font-weight: bold; width: 60px;">CTRL</button>
+            <button type="button" id="termux-ctrl-btn" class="termux-key" onclick="toggleTermuxCtrl()" style="background: rgba(59, 130, 246, 0.1); border-color: var(--accent-main); font-weight: bold; width: 60px;">CTRL</button>
             <button type="button" class="termux-key" onclick="sendTerminalKey('ESC')">ESC</button>
             <button type="button" class="termux-key" onclick="sendTerminalKey('TAB')">TAB</button>
             <button type="button" class="termux-key" onclick="sendTerminalKey('UP')">↑</button>
             <button type="button" class="termux-key" onclick="sendTerminalKey('DOWN')">↓</button>
         </div>
-
-        <form id="terminal-form" class="terminal-input-area" onsubmit="event.preventDefault(); sendTerminalCommand();">
-            <span id="prompt-text">user@devportal:~$</span>
-            <input type="text" id="terminal-input" autocomplete="off" spellcheck="false" placeholder="Type command...">
-            <button type="submit" id="terminal-send-btn" class="editor-btn primary" title="Send Command"><i class="fa-solid fa-paper-plane"></i></button>
-        </form>
     </div>
 
     <div class="terminal-sidebar">

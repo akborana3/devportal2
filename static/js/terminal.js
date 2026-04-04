@@ -4,6 +4,8 @@ let ws;
 const frames = ["/", "-", "\\", "|"];
 let frameIdx = 0;
 let loaderInterval;
+let term;
+let fitAddon;
 
 function updateConnectionStatus(status) {
     const dot = document.getElementById('connection-dot');
@@ -28,12 +30,34 @@ function updateConnectionStatus(status) {
     }
 }
 
-// ⚡ FIX: Force functions into global window scope
 window.initTerminal = function() {
     if (!currentToken) return;
 
-    const promptEl = document.getElementById('prompt-text');
-    if(promptEl) promptEl.innerText = `${currentUser}@devportal:~$`;
+    // Initialize xterm.js
+    const terminalContainer = document.getElementById('terminal-output');
+    if (terminalContainer && !window.term) {
+        term = new Terminal({
+            cursorBlink: true,
+            theme: {
+                background: '#000000',
+                foreground: '#ffffff'
+            },
+            fontFamily: 'Consolas, "Courier New", monospace',
+            fontSize: 14
+        });
+        fitAddon = new FitAddon.FitAddon();
+        term.loadAddon(fitAddon);
+        term.open(terminalContainer);
+        fitAddon.fit();
+        window.term = term;
+
+        // Resize event
+        window.addEventListener('resize', () => {
+            if (fitAddon) {
+                fitAddon.fit();
+            }
+        });
+    }
 
     const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
     updateConnectionStatus('connecting');
@@ -43,24 +67,28 @@ window.initTerminal = function() {
     ws.onopen = () => {
         updateConnectionStatus('connected');
         showToast("Terminal connected successfully", "success");
+        if (term) {
+            term.write('\r\n*** Connected to backend ***\r\n');
+        }
     };
 
     ws.onmessage = (e) => {
         const data = JSON.parse(e.data);
-        const out = document.getElementById('terminal-output');
         const aiChat = document.getElementById('ai-mini-chat');
         
         if (data.type === 'clear') {
-            out.innerHTML = '';
+            if (term) term.clear();
         } else if (data.type === 'ai_status') {
             if (data.status === 'idle') window.stopLoader();
             else window.startLoader(data.status);
         } else {
-            const div = document.createElement('div');
-            div.className = `term-msg ${data.type}`;
-            div.textContent = data.content;
-            out.appendChild(div);
-            out.scrollTop = out.scrollHeight;
+            // Write to xterm instead of DOM elements
+            if (term && data.content) {
+                // If it's a regular message, handle formatting for xterm
+                // Ensure newlines are \r\n
+                const text = data.content.replace(/\r?\n/g, '\r\n');
+                term.write(text + '\r\n');
+            }
 
             if (data.type === 'ai' && aiChat) {
                 const aiDiv = document.createElement('div');
@@ -80,43 +108,61 @@ window.initTerminal = function() {
     ws.onclose = () => {
         updateConnectionStatus('disconnected');
         showToast("Terminal connection lost", "error");
-        const out = document.getElementById('terminal-output');
-        if(out) {
-            const div = document.createElement('div');
-            div.className = `term-msg error`;
-            div.textContent = `[Connection Lost. Please refresh the page.]`;
-            out.appendChild(div);
+        if (term) {
+            term.write('\r\n*** Connection Lost. Please refresh the page. ***\r\n');
         }
     };
 
     ws.onerror = () => {
         updateConnectionStatus('disconnected');
     };
+
+    // Terminal data handling (sending keystrokes to server)
+    if (term) {
+        let currentCommand = '';
+        term.onData(e => {
+            if (!ws || ws.readyState !== WebSocket.OPEN) return;
+
+            // For now, since the backend expects full commands rather than raw pty streams:
+            // We'll accumulate simple input and send on Enter.
+            // A true pty integration would send `e` directly.
+
+            const ev = e;
+            switch (ev) {
+                case '\r': // Enter
+                    term.write('\r\n');
+                    ws.send(JSON.stringify({ command: currentCommand }));
+                    currentCommand = '';
+                    break;
+                case '\u007F': // Backspace (DEL)
+                    if (currentCommand.length > 0) {
+                        currentCommand = currentCommand.substring(0, currentCommand.length - 1);
+                        term.write('\b \b');
+                    }
+                    break;
+                case '\u0003': // Ctrl+C
+                    ws.send(JSON.stringify({ command: '\x03' }));
+                    term.write('^C\r\n');
+                    currentCommand = '';
+                    break;
+                default:
+                    if (window.ctrlActive && ev.length === 1 && ev.match(/[a-zA-Z]/)) {
+                        const char = ev.toLowerCase();
+                        const ctrlCode = String.fromCharCode(char.charCodeAt(0) - 96);
+                        ws.send(JSON.stringify({ command: ctrlCode }));
+                        term.write("^" + char.toUpperCase() + "\r\n");
+                        window.toggleTermuxCtrl();
+                    } else if (ev >= String.fromCharCode(0x20) && ev <= String.fromCharCode(0x7E)) {
+                        currentCommand += ev;
+                        term.write(ev);
+                    }
+            }
+        });
+    }
 };
 
 window.sendTerminalCommand = function() {
-    const input = document.getElementById('terminal-input');
-    if (!input) return;
-
-    const cmd = input.value.trim();
-    if (!cmd) return;
-
-    if (!ws || ws.readyState !== WebSocket.OPEN) {
-        showToast("Terminal disconnected. Please refresh the page.", "error");
-        return;
-    }
-
-    const div = document.createElement('div');
-    div.className = 'term-msg user';
-    div.textContent = `${document.getElementById('prompt-text').innerText} ${cmd}`;
-    document.getElementById('terminal-output').appendChild(div);
-    
-    ws.send(JSON.stringify({ command: cmd }));
-    input.value = '';
-    
-    if (window.innerWidth > 768) {
-        input.focus(); 
-    }
+    // Kept for backward compatibility if needed, but xterm handles input now
 };
 
 window.startLoader = function(statusText) {
@@ -139,14 +185,17 @@ window.stopLoader = function() {
 };
 
 window.insertCmd = function(cmd) {
-    const input = document.getElementById('terminal-input');
-    if (input) {
-        input.value = cmd;
-        input.focus();
+    if (term) {
+        term.write(cmd);
+        // We'd need a more robust input buffer mechanism to seamlessly inject this into the current line
+        if (ws && ws.readyState === WebSocket.OPEN) {
+            ws.send(JSON.stringify({ command: cmd }));
+            term.write('\r\n');
+        }
     }
 };
 
-let ctrlActive = false;
+window.ctrlActive = false;
 
 window.toggleTermuxCtrl = function() {
     ctrlActive = !ctrlActive;
@@ -155,51 +204,24 @@ window.toggleTermuxCtrl = function() {
         btn.style.background = 'var(--accent-main)';
         btn.style.color = '#000';
     } else {
-        btn.style.background = 'rgba(255,193,7,0.1)';
+        btn.style.background = 'rgba(59, 130, 246, 0.1)';
         btn.style.color = 'var(--text-primary)';
     }
-    document.getElementById('terminal-input').focus();
+    if(term) term.focus();
 };
 
-document.getElementById('terminal-input').addEventListener('keydown', function(e) {
-    if (ctrlActive && e.key.length === 1) {
-        // e.key is the letter pressed, e.g., 'c'
-        const letter = e.key.toUpperCase();
-
-        if (ws && ws.readyState === WebSocket.OPEN) {
-            // For Ctrl+C, send \x03
-            if (letter === 'C') {
-                ws.send(JSON.stringify({ command: '\x03' }));
-                showToast("Sent Ctrl+C", "info");
-            }
-            // For Ctrl+Z, send \x1a
-            else if (letter === 'Z') {
-                ws.send(JSON.stringify({ command: '\x1a' }));
-                showToast("Sent Ctrl+Z", "info");
-            }
-            // Add other standard mappings if needed
-            else {
-                 showToast(`Sent Ctrl+${letter}`, "info");
-            }
-        }
-
-        e.preventDefault(); // Stop the letter from typing
-        toggleTermuxCtrl(); // Turn off Ctrl after one use
-    }
-});
-
+// Map virtual keys to xterm
 window.sendTerminalKey = function(key) {
-    const input = document.getElementById('terminal-input');
-    if (!input) return;
+    if (!term) return;
 
     if (key === 'ESC') {
-        input.value += '\\e';
+        term.write('\x1b');
     } else if (key === 'TAB') {
-        input.value += '\\t';
+        term.write('\t');
     } else if (key === 'UP') {
-         showToast("Arrow keys not fully supported in this interface yet.", "warning");
+        term.write('\x1b[A');
     } else if (key === 'DOWN') {
-         showToast("Arrow keys not fully supported in this interface yet.", "warning");
+        term.write('\x1b[B');
     }
-    input.focus();
+    term.focus();
 };

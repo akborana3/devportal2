@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+        <meta name="theme-color" content="#0f111a">
+    <link rel="manifest" href="/static/manifest.json">
+    <link rel="apple-touch-icon" href="/static/manifest.json">
     <title>DEVPORTAL - Developer Workspace</title>
 
     <link rel="stylesheet" href="/static/css/terminal.css">
@@ -14,6 +17,9 @@
 
     <!-- FontAwesome for professional icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xterm@5.3.0/css/xterm.css" />
+    <script src="https://cdn.jsdelivr.net/npm/xterm@5.3.0/lib/xterm.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xterm-addon-fit@0.8.0/lib/xterm-addon-fit.js"></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.32.3/ace.js"></script>
     <!-- Markdown and Code Highlighting for AI Chat -->
@@ -133,6 +139,27 @@
             </div>
 
         </main>
+
+        <nav id="bottom-nav">
+            <div class="nav-item" onclick="switchView('dashboard-view', this)">
+                <i class="fa-solid fa-chart-line"></i>
+            </div>
+            <div class="nav-item active" onclick="switchView('terminal-view', this)">
+                <i class="fa-solid fa-terminal"></i>
+            </div>
+            <div class="nav-item" onclick="switchView('editor-view', this)">
+                <i class="fa-solid fa-file-code"></i>
+            </div>
+            <div class="nav-item" onclick="switchView('ai-chat-view', this)">
+                <i class="fa-solid fa-robot"></i>
+            </div>
+            <div class="nav-item" onclick="switchView('apps-view', this)">
+                <i class="fa-solid fa-link"></i>
+            </div>
+            <div class="nav-item" onclick="switchView('settings-view', this)">
+                <i class="fa-solid fa-gear"></i>
+            </div>
+        </nav>
     </div>
 
     <!-- Toast Container -->
@@ -145,5 +172,17 @@
     <script src="/static/js/settings.js?v=4"></script>
     <script src="/static/js/dashboard.js?v=4"></script>
     <script src="/static/js/projects.js?v=4"></script>
+<!-- Register Service Worker -->
+<script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/static/sw.js').then(reg => {
+                console.log('ServiceWorker registration successful');
+            }).catch(err => {
+                console.log('ServiceWorker registration failed: ', err);
+            });
+        });
+    }
+</script>
 </body>
 </html>

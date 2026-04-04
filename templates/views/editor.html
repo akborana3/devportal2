@@ -15,18 +15,24 @@
 
     <!-- Center: Code Editor -->
     <div class="editor-main" id="editor-main-container">
-        <div class="editor-toolbar">
-            <input type="text" id="current-filename" class="filename-input" placeholder="untitled.html">
+        <!-- VS Code Style Tabs -->
+        <div class="editor-tabs" id="editor-tabs">
+            <!-- Tabs will be dynamically inserted here -->
+        </div>
+
+        <div class="editor-toolbar" style="padding: 5px 10px; border-bottom: 1px solid var(--border-color); background: var(--bg-surface);">
+            <div style="display: flex; gap: 5px; align-items: center;">
+                <span id="current-file-path" style="font-size: 12px; color: var(--text-muted); font-family: var(--font-mono);">No file selected</span>
+            </div>
             
-            <button class="editor-btn" onclick="renameFile()" title="Rename File"><i class="fa-solid fa-pen-to-square"></i></button>
-            <button class="editor-btn primary" onclick="saveFile()" title="Save File (Ctrl+S)"><i class="fa-solid fa-floppy-disk"></i> Save</button>
-            
-            <div style="margin-left: auto; display: flex; gap: 10px; align-items: center;">
+            <div style="margin-left: auto; display: flex; gap: 5px; align-items: center;">
+                <button class="editor-btn primary" onclick="saveFile()" title="Save File (Ctrl+S)"><i class="fa-solid fa-floppy-disk"></i></button>
+                <button class="editor-btn" onclick="renameFile()" title="Rename File"><i class="fa-solid fa-pen-to-square"></i></button>
                 <button id="run-btn" class="editor-btn success" onclick="runCode()" style="display: none;" title="Run HTML/JS in browser">
-                    <i class="fa-solid fa-play"></i> Run Output
+                    <i class="fa-solid fa-play"></i>
                 </button>
                 <button class="editor-btn ai" onclick="aiEdit()" title="AI Edit">
-                    <i class="fa-solid fa-wand-magic-sparkles"></i> AI Edit
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
                 </button>
             </div>
         </div>

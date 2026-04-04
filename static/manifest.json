@@ -1,0 +1,21 @@
+{
+  "name": "DEVPORTAL",
+  "short_name": "DEVPORTAL",
+  "description": "A sleek, modern developer workspace.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f111a",
+  "theme_color": "#0f111a",
+  "icons": [
+    {
+      "src": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzZmN2JmNyI+PHBhdGggZD0iTTkuNCAxNi42TDE0LjggMTJMOS40IDcuNEw4IDguOEwxMi4yIDEyTDggMTUuMkw5LjQgMTYuNlpNMTQgMTZWMTRIMjBWMTZIMTRaIi8+PC9zdmc+",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzZmN2JmNyI+PHBhdGggZD0iTTkuNCAxNi42TDE0LjggMTJMOS40IDcuNEw4IDguOEwxMi4yIDEyTDggMTUuMkw5LjQgMTYuNlpNMTQgMTZWMTRIMjBWMTZIMTRaIi8+PC9zdmc+",
+      "sizes": "512x512",
+      "type": "image/svg+xml"
+    }
+  ]
+}

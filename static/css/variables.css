@@ -1,61 +1,62 @@
-/* static/css/variables.css */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap');
 @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css');
 
 :root {
-    /* DEVPORTAL Dark Tech Palette (Default) */
-    --bg-base: #050505;
-    --bg-surface: #0a0a0a;
-    --panel-bg: rgba(20, 20, 20, 0.6);
+    /* DEVPORTAL Option A: Sleek & Modern (VS Code / Vercel style) */
+    --bg-base: #09090b; /* Zinc 950 */
+    --bg-surface: #18181b; /* Zinc 900 */
+    --panel-bg: #18181b;
+    --sidebar-bg: #09090b;
     
-    /* The Neon Yellow Accent */
-    --accent-main: #ffc107;
-    --accent-glow: rgba(255, 193, 7, 0.3);
-    --accent-hover: #ffca2c;
+    --accent-main: #3b82f6; /* Blue 500 */
+    --accent-glow: rgba(59, 130, 246, 0.2);
+    --accent-hover: #2563eb; /* Blue 600 */
     
     /* Text Colors */
-    --text-primary: #ffffff;
-    --text-secondary: #a0a0a0;
-    --text-muted: #666666;
+    --text-primary: #fafafa; /* Zinc 50 */
+    --text-secondary: #a1a1aa; /* Zinc 400 */
+    --text-muted: #71717a; /* Zinc 500 */
     
     /* Borders & UI */
-    --border-color: rgba(255, 255, 255, 0.08);
-    --glass-border: 1px solid rgba(255, 255, 255, 0.05);
-    --error-color: #ff3366;
-    --success-color: #00e676;
-    --info-color: #3b82f6;
+    --border-color: #27272a; /* Zinc 800 */
+    --glass-border: 1px solid #27272a;
+    --error-color: #ef4444; /* Red 500 */
+    --success-color: #10b981; /* Emerald 500 */
+    --info-color: #3b82f6; /* Blue 500 */
+    --warning-color: #f59e0b; /* Amber 500 */
     
     /* Fonts */
-    --font-ui: 'Inter', sans-serif;
-    --font-mono: 'Fira Code', monospace;
+    --font-ui: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --font-mono: 'Fira Code', 'JetBrains Mono', 'Menlo', 'Consolas', monospace;
     
-    /* Glassmorphism blur */
-    --backdrop-blur: blur(12px);
+    --backdrop-blur: blur(8px);
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.4);
+    --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.5);
 
-    /* Shadows */
-    --shadow-sm: 0 4px 6px rgba(0,0,0,0.3);
-    --shadow-md: 0 10px 15px rgba(0,0,0,0.5);
+    /* Layout Variables */
+    --bottom-nav-height: 60px;
 }
 
 :root.light-theme {
-    /* DEVPORTAL Light Palette */
-    --bg-base: #f0f2f5;
+    /* Sleek Light Palette */
+    --bg-base: #fafafa; /* Zinc 50 */
     --bg-surface: #ffffff;
-    --panel-bg: rgba(255, 255, 255, 0.8);
+    --panel-bg: #ffffff;
+    --sidebar-bg: #f4f4f5; /* Zinc 100 */
 
-    --accent-main: #0066cc;
-    --accent-glow: rgba(0, 102, 204, 0.3);
-    --accent-hover: #0052a3;
+    --accent-main: #2563eb;
+    --accent-glow: rgba(37, 99, 235, 0.2);
+    --accent-hover: #1d4ed8;
 
-    --text-primary: #1a1a1a;
-    --text-secondary: #4a4a4a;
-    --text-muted: #888888;
+    --text-primary: #09090b;
+    --text-secondary: #52525b;
+    --text-muted: #a1a1aa;
 
-    --border-color: rgba(0, 0, 0, 0.1);
-    --glass-border: 1px solid rgba(0, 0, 0, 0.08);
+    --border-color: #e4e4e7; /* Zinc 200 */
+    --glass-border: 1px solid #e4e4e7;
 
-    --shadow-sm: 0 4px 6px rgba(0,0,0,0.05);
-    --shadow-md: 0 10px 15px rgba(0,0,0,0.1);
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1);
 }
 
 body {
@@ -66,29 +67,29 @@ body {
     height: 100dvh;
     overflow: hidden;
     display: flex;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-/* Custom Scrollbar */
-::-webkit-scrollbar { width: 6px; height: 6px; }
+/* Modern Scrollbar */
+::-webkit-scrollbar { width: 8px; height: 8px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(128,128,128,0.3); border-radius: 10px; }
-::-webkit-scrollbar-thumb:hover { background: var(--accent-main); }
+::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
 
 /* Markdown Overrides */
 .markdown-body pre {
-    background: #1e1e1e !important;
+    background: #18181b !important;
     padding: 12px;
-    border-radius: 8px;
+    border-radius: 6px;
     overflow-x: auto;
     margin: 10px 0;
-    border: 1px solid rgba(255,255,255,0.1);
+    border: var(--glass-border);
 }
 
 .markdown-body code {
     font-family: var(--font-mono);
     font-size: 13px;
-    background: rgba(0,0,0,0.2);
+    background: var(--border-color);
     padding: 2px 4px;
     border-radius: 4px;
 }
@@ -96,11 +97,14 @@ body {
 .markdown-body pre code {
     background: transparent;
     padding: 0;
-    color: #abb2bf; /* highlight.js default */
+    color: #e4e4e7;
 }
 
-.light-theme .markdown-body code {
-    background: rgba(0,0,0,0.05);
+.light-theme .markdown-body pre {
+    background: #f4f4f5 !important;
+}
+.light-theme .markdown-body pre code {
+    color: #18181b;
 }
 
 .markdown-body p {
