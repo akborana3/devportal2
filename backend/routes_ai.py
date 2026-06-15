@@ -3,7 +3,6 @@ import json
 import re
 import httpx
 import subprocess
-import asyncio
 from fastapi import APIRouter
 from fastapi.responses import StreamingResponse
 from backend.database import get_username, DB_FILE
@@ -140,7 +139,6 @@ async def chat_with_ai(data: dict):
 
                     # After successful stream, save to DB
                     if full_reply:
-                        from backend.database import get_username
                         username = get_username(token)
                         if username:
                             conn = sqlite3.connect(DB_FILE)
